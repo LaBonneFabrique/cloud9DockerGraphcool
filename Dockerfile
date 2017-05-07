@@ -7,14 +7,33 @@ MAINTAINER Kevin Delfour <kevin@delfour.eu>
 
 # ------------------------------------------------------------------------------
 # Install base
-RUN apt-get update
-RUN apt-get install -y build-essential g++ curl libssl-dev apache2-utils git libxml2-dev sshfs
+RUN apt-get update && apt-get install -y \
+build-essential g++ curl libssl-dev apache2-utils git libxml2-dev sshfs imagemagick
+RUN git config --global url."https://".insteadOf git://
+
+# ------------------------------------------------------------------------------
+# locales pour mongoDB
+ENV LANG fr_FR.UTF-8
+
+RUN locale-gen en_US && \
+  locale-gen en_US.UTF-8 && \
+  locale-gen fr_FR && \
+  locale-gen fr_FR.UTF-8 && \
+  dpkg-reconfigure locales
 
 # ------------------------------------------------------------------------------
 # Install Node.js
-RUN curl -sL https://deb.nodesource.com/setup | bash -
+RUN curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
 RUN apt-get install -y nodejs
-    
+
+# ------------------------------------------------------------------------------
+# install meteor
+RUN curl https://install.meteor.com/ | sh
+
+# ------------------------------------------------------------------------------
+# add user
+RUN useradd -ms /bin/bash lbf && echo "lbf:lsdm38!" | chpasswd && adduser lbf sudo
+
 # ------------------------------------------------------------------------------
 # Install Cloud9
 RUN git clone https://github.com/c9/core.git /cloud9
@@ -22,7 +41,7 @@ WORKDIR /cloud9
 RUN scripts/install-sdk.sh
 
 # Tweak standlone.js conf
-RUN sed -i -e 's_127.0.0.1_0.0.0.0_g' /cloud9/configs/standalone.js 
+RUN sed -i -e 's_127.0.0.1_0.0.0.0_g' /cloud9/configs/standalone.js
 
 # Add supervisord conf
 ADD conf/cloud9.conf /etc/supervisor/conf.d/
@@ -39,6 +58,9 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # ------------------------------------------------------------------------------
 # Expose ports.
 EXPOSE 80
+#cloud9 direct
+EXPOSE 8081
+#meteor app direct
 EXPOSE 3000
 
 # ------------------------------------------------------------------------------
