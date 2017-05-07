@@ -23,8 +23,10 @@ RUN locale-gen en_US && \
 
 # ------------------------------------------------------------------------------
 # Install Node.js
-RUN curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
-RUN apt-get install -y nodejs
+RUN curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash - \
+  && apt-get install -y nodejs
+#RUN curl -sL https://deb.nodesource.com/setup | sudo bash -\
+#	&& apt-get install -y nodejs
 
 # ------------------------------------------------------------------------------
 # install meteor
@@ -58,7 +60,6 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # ------------------------------------------------------------------------------
 # Expose ports.
 EXPOSE 8080
-#meteor app direct
 EXPOSE 3000
 
 # ------------------------------------------------------------------------------
