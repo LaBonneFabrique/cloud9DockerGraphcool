@@ -6,6 +6,11 @@ FROM kdelfour/supervisor-docker
 MAINTAINER Kevin Delfour <kevin@delfour.eu>
 
 # ------------------------------------------------------------------------------
+# variables d'environnement
+ENV USER lbf
+ENV PASSWORD lsdm
+
+# ------------------------------------------------------------------------------
 # Install base
 RUN apt-get update && apt-get install -y \
 build-essential g++ curl libssl-dev apache2-utils git libxml2-dev sshfs imagemagick
@@ -48,6 +53,7 @@ RUN sed -i -e 's_127.0.0.1_0.0.0.0_g' /cloud9/configs/standalone.js
 # Add supervisord conf
 ADD conf/cloud9.conf /etc/supervisor/conf.d/
 
+
 # ------------------------------------------------------------------------------
 # Add volumes
 RUN mkdir /workspace
@@ -62,6 +68,8 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 EXPOSE 8080
 EXPOSE 3000
 
+ADD scripts/sed.sh /etc/scripts/
+ENTRYPOINT ["/etc/scripts/sed.sh"]
 # ------------------------------------------------------------------------------
 # Start supervisor, define default command.
 CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
