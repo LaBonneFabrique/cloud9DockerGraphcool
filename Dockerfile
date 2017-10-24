@@ -33,9 +33,9 @@ RUN curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash - \
 #RUN curl -sL https://deb.nodesource.com/setup | sudo bash -\
 #	&& apt-get install -y nodejs
 
-# ------------------------------------------------------------------------------
-# install meteor
-RUN curl https://install.meteor.com/ | sh
+#-------------------------------------------------------
+# install graphCool
+RUN npm install -g graphcool@next
 
 # ------------------------------------------------------------------------------
 # add user
